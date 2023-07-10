@@ -19,9 +19,9 @@ namespace NameSpace.Settings
     /// </summary>
     public class SettingsFile
     {
-        public static AppName = "App";
-        public static MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        public static AppFolder = Path.Combine(MyDocuments, AppName);
+        public static string AppName = "App";
+        public static string MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        public static string AppFolder = Path.Combine(MyDocuments, AppName);
         public static string SettingsFile = Path.Combine(AppFolder, "Settings.ini");
         public static List<Setting> Settings = new();
 
