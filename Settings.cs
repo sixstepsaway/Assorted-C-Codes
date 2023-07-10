@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NameSpace.Settings
+namespace AppName.Settings
 {
     /// <summary>
     /// A simple class for saving and retrieving settings.
@@ -22,12 +23,12 @@ namespace NameSpace.Settings
         public static string AppName = "App";
         public static string MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         public static string AppFolder = Path.Combine(MyDocuments, AppName);
-        public static string SettingsFile = Path.Combine(AppFolder, "Settings.ini");
+        public static string SettingFile = Path.Combine(AppFolder, "Settings.ini");
         public static List<Setting> Settings = new();
 
         public static void SaveSetting(string name, string value){
-            var setting = Settings.Where(x => x.SettingName == name).FirstOrDefault();
-            if (setting.Any()){
+            Setting setting = Settings.Where(x => x.SettingName == name).FirstOrDefault();
+            if (setting != null){
                 Settings.Remove(setting);
             }
             Settings.Add(new Setting(){SettingName = name, SettingValue = value});                    
@@ -36,8 +37,8 @@ namespace NameSpace.Settings
 
         public static string LoadSetting (string name){
             var setting = Settings.Where(x => x.SettingName == name).FirstOrDefault();
-            if (setting.Any()){
-                return setting.value;
+            if (setting != null){
+                return setting.SettingValue;
             } else {
                 return null;
             }
@@ -47,7 +48,7 @@ namespace NameSpace.Settings
             if (!Directory.Exists(AppFolder)){
                 DirectoryInfo di = Directory.CreateDirectory(AppFolder);
             }
-            using (StreamWriter streamWriter = new(SettingsFile)){
+            using (StreamWriter streamWriter = new(SettingFile)){
                 foreach (Setting setting in Settings){
                     streamWriter.WriteLine(string.Format("{0} = {1}", setting.SettingName, setting.SettingValue));
                 }
@@ -58,20 +59,20 @@ namespace NameSpace.Settings
         }
 
         public static void LoadSettingsFile(){            
-            if (!File.Exists(SettingsFile)){
+            if (!File.Exists(SettingFile)){
                 Settings.Clear();
-                using (StreamReader streamReader = new StreamReader(SettingsFile)){
+                using (StreamReader streamReader = new StreamReader(SettingFile)){
                     bool eos = false;                
                     while (eos == false){
                         if(!streamReader.EndOfStream){
-                            string settings = streamReader.ReadLine();
-                            var line = settings.Split(" = ");
-                            Setting setting = new()
+                            string setting = streamReader.ReadLine();
+                            var line = setting.Split(" = ");
+                            Setting newsetting = new()
                             {
                                 SettingName = line[0],
                                 SettingValue = line[1]
                             };
-                            Settings.Add(setting);
+                            Settings.Add(newsetting);
                         } else {
                             eos = true;
                         }
